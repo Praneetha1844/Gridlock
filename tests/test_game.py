@@ -1,4 +1,4 @@
-from gridlock.game import play
+from gridlock.game import play, session
 
 
 class FirstOption:

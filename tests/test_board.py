@@ -53,3 +53,24 @@ def test_full_board_without_a_winner():
     assert board.is_full()
     assert board.winner() is None
     assert all(cell != EMPTY for row in board.cells for cell in row)
+
+
+def test_winner_is_reported_for_either_mark():
+    for mark in ("X", "O"):
+        board = Board()
+        for row, col in ((0, 0), (1, 1), (2, 2)):
+            board.place(row, col, mark)
+        assert board.winner() == mark
+
+
+def test_boards_do_not_share_state():
+    first, second = Board(), Board()
+    first.place(0, 0, "X")
+    assert second.cells[0][0] == EMPTY
+
+
+def test_render_shows_placed_marks():
+    board = Board()
+    board.place(0, 0, "X")
+    board.place(2, 1, "O")
+    assert board.render() == "X - -\n- - -\n- O -"

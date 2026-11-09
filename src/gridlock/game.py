@@ -43,8 +43,19 @@ def play(input_fn=input, rng=random):
         player = 2 if player == 1 else 1
 
 
+def session(input_fn=input, rng=random):
+    """Play games until the players decline a rematch. Returns the tally of results."""
+    tally = {1: 0, 2: 0, "ties": 0}
+    while True:
+        winner = play(input_fn, rng)
+        tally[winner or "ties"] += 1
+        print(f"Score - Player 1: {tally[1]}, Player 2: {tally[2]}, ties: {tally['ties']}\n")
+        if input_fn("Play again? (y/n): ").strip().lower() not in ("y", "yes"):
+            return tally
+
+
 def main():
     try:
-        play()
+        session()
     except (EOFError, KeyboardInterrupt):
         print("\nGame aborted.")
