@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gridlock"
+version = "1.0.0"
+description = "Two-player tic-tac-toe for the terminal."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Praneetha Potharaju" }]
+
+[project.scripts]
+gridlock = "gridlock.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
