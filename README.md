@@ -8,6 +8,7 @@ Two-player tic-tac-toe for the terminal, with the rules engine kept separate fro
 - A random player opens each game
 - Input validation: non-numeric entries, wrong counts, off-board cells and occupied cells are rejected with a message and the same player is asked again
 - Win detection across all 8 lines (3 rows, 3 columns, 2 diagonals) and tie detection
+- Rematch prompt with a running tally of wins and ties
 - Ctrl+C or end of input exits cleanly
 
 There is no computer opponent.
@@ -51,6 +52,9 @@ flowchart TD
     check -- "winner" --> win[Announce winner]
     check -- "full" --> tie[Announce tie]
     check -- "neither" --> swap[Switch player] --> game
+    win --> again{Play again?}
+    tie --> again
+    again -- yes --> game
 ```
 
 `board.py` has no input or output. `game.py` takes the input function and random source as arguments, so tests drive whole games with scripted moves.
@@ -64,7 +68,7 @@ src/gridlock/
   __main__.py     entry point
 tests/
   test_board.py   every winning line, tie, illegal moves
-  test_game.py    scripted games: wins, tie, bad input
+  test_game.py    scripted games: wins, tie, bad input, rematch tally
 .github/workflows/ci.yml
 ```
 
@@ -81,13 +85,14 @@ ruff check .
 - Local two-player only; no computer opponent or network play
 - Fixed 3x3 board
 - Plain-text interface with no colour or cell numbering
-- No score tracking across games or rematch prompt
+- The tally is kept only for the current session
+- The tests are written but have not been run in CI yet
 
 ## Roadmap
 
-- Play-again prompt and score tally
-- Computer opponent
+- Computer opponent (for example minimax, which is solvable on a 3x3 board)
 - Configurable board size
+- Cell numbering or coordinates drawn around the board
 
 ## License
 
