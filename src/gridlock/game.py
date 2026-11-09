@@ -1,102 +1,50 @@
+"""Terminal front end: a two-player game loop on top of the Board rules."""
+
 import random
-import array as arr
-from array import *
-import sys
-def fullboard():
- for r in table:
-    for c in r:
-        if(table[s][p]=="x" or table[s][p]=="o" ): # map(int, input().split())
-            print("it is a tie")
-        else:
-            return
-def askinput():
-   s,p=map(int,input("enter the coordinates").split())
-   if (n==1):
-      table[s][p]="x"
-      for r in table:
-        for c in r:
-          print(c,end = " ")
-        print()
-   elif (n==2):
-      table[s][p]="o"
-      for r in table:
-        for c in r:
-          print(c,end = " ")
-        print()
-def checking():
-    if (table[0][0]=="x" and table[0][1]=="x" and table[0][2]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[1][0]=="x" and table[1][1]=="x" and table[1][2]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[2][0]=="x" and table[2][1]=="x" and table[2][2]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][0]=="x" and table[1][0]=="x" and table[2][0]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][1]=="x" and table[1][1]=="x" and table[2][1]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][2]=="x" and table[1][2]=="x" and table[2][2]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][0]=="x" and table[1][1]=="x" and table[2][2]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][2]=="x" and table[1][1]=="x" and table[2][0]=="x"):
-        print("player 1 won")
-        exit()
-    elif (table[0][0]=="o" and table[0][1]=="o" and table[0][2]=="o"):    #2nd player winning
-        print("player 2 won")
-        exit()
-    elif (table[1][0]=="o" and table[1][1]=="o" and table[1][2]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[2][0]=="o" and table[2][1]=="o" and table[2][2]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[0][0]=="o" and table[1][0]=="o" and table[2][0]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[0][1]=="o" and table[1][1]=="o" and table[2][1]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[0][2]=="o" and table[1][2]=="o" and table[2][2]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[0][0]=="o" and table[1][1]=="o" and table[2][2]=="o"):
-        print("player 2 won")
-        exit()
-    elif (table[0][2]=="o" and table[1][1]=="o" and table[2][0]=="o"):
-        print("player 2 won")
-        exit()
-    else:
+
+from gridlock.board import MARKS, Board
+
+PROMPT = "Player {player} ({mark}) - enter row and column (0-2): "
+
+
+def read_move(board, player, input_fn=input):
+    """Ask until the player enters a legal move, then place it on the board."""
+    mark = MARKS[player - 1]
+    while True:
+        raw = input_fn(PROMPT.format(player=player, mark=mark))
+        try:
+            row, col = (int(part) for part in raw.split())
+        except ValueError:
+            print("Enter two whole numbers separated by a space, for example: 1 2")
+            continue
+        try:
+            board.place(row, col, mark)
+        except ValueError as error:
+            print(error)
+            continue
         return
-table=[["-","-","-"],["-","-","-"],["-","-","-"]]
-for r in table:
-    for c in r:
-     print(c,end = " ")
-    print()
-n=random.randint(1, 2)
-print("player",n,"enter the coordinates")
-askinput()
-checking()
-for i in range(0,8):
-  if(n==1):
-    n=2
-    print("its player 2's turn")
-    askinput()
-    checking()
-  elif(n==2):
-    n=1
-    print("its player 1's turn")
-    askinput()
-    checking()
-print("it is a tie")
 
 
+def play(input_fn=input, rng=random):
+    """Play one game. Returns the winning player number (1 or 2), or None for a tie."""
+    board = Board()
+    player = rng.choice((1, 2))  # either player may open
+    print(f"Player {player} goes first.\n")
+    print(board.render(), end="\n\n")
+    while True:
+        read_move(board, player, input_fn)
+        print(board.render(), end="\n\n")
+        if board.winner():
+            print(f"Player {player} wins!")
+            return player
+        if board.is_full():
+            print("It's a tie.")
+            return None
+        player = 2 if player == 1 else 1
 
 
-
+def main():
+    try:
+        play()
+    except (EOFError, KeyboardInterrupt):
+        print("\nGame aborted.")
